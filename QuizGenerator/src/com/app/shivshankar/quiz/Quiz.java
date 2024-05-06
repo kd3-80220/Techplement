@@ -1,6 +1,8 @@
 package com.app.shivshankar.quiz;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,18 +15,20 @@ public class Quiz {
 	public static int menu()
 	{
 		Scanner sc=new Scanner(System.in);
-		System.out.println("1.add question");
-		System.out.println("2.take quiz");
-		System.out.println("3.check score");
+		System.out.println("1.Add Question");
+		System.out.println("2.Take Quiz");
+		System.out.println("3.Check Score");
+		System.out.println("4.See performance of all students");
 		System.out.println("0.Exit");
 		int choice=sc.nextInt();
 		return choice;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		ArrayList<Question> gkquestions=new ArrayList<Question>();	//ArrayList used to store questions of quiz
-		HashMap<String,Integer> students=new HashMap<String,Integer>();	//Used to store students info who are giving exam
 		int score=0;
+		int latestScore=0;
+		QuizDao qd=new QuizDao();
 		String name=null;
 		Scanner sc=new Scanner(System.in);
 		int noQuestions=0;
@@ -38,33 +42,40 @@ public class Quiz {
 					for(int i=0;i<noQuestions;i++)
 					{
 					Question q=new Question();
-					q.addQuestion();
+					q.addQuestion();	//question added in ArrayList
+					qd.addQuestion(q);	//Question added in database
 					gkquestions.add(q);
 					}
-					System.out.println("gkquestions.size(): "+gkquestions.size());
-					
 				break;
 			case 2: System.out.println("Do you want to give quiz? (yes/no)");
 					String chooseoption=sc.next();
 					if(chooseoption.startsWith("y")) {	//if user enter string start with y then this method will work
 					System.out.println("Enter your name");
 					name=sc.next();
-					System.out.println("gkquestions.size(): "+gkquestions.size());
-					for(int i=0;i<gkquestions.size();i++)
+					
+					ArrayList<Question> testQuestions=new ArrayList<Question>();
+					testQuestions=qd.getTestQuestions();
+					Collections.shuffle(testQuestions);
+					System.out.println(testQuestions.size());
+					for(int i=0;i<testQuestions.size();i++)
 					{
-					gkquestions.get(i).displayQuestion();
+						testQuestions.get(i).displayQuestion();
 					System.out.println("Enter correct option");
 					int ans=sc.nextInt();
-					if(gkquestions.get(i).isCorrect(ans))
+					if(testQuestions.get(i).isCorrect(ans))
 						score++;
 					}
-					students.put(name, score);
+					qd.addScore(name, score);
+					latestScore=score;
+					score=0;
+					}else {
+						continue;
 					}
 				break;
-			case 3:	for(Entry<String, Integer> entry:students.entrySet())	//here we have iterated students and their scores
-																			//Entry and entry set used to extract values from hashmap as key value pair									
-					System.out.println("Name: "+entry.getKey()+" Score: "+entry.getValue());
+			case 3:	System.out.println("Name: "+name+" Score: "+latestScore);
 				break;
+			case 4:	qd.seeAllStudentPerformance();
+			break;
 			default: System.out.println("You have entered wrong choice");
 				break;
 			}

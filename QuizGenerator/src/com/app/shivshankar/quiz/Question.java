@@ -46,4 +46,29 @@ public class Question {
             System.out.println((i + 1) + ". " +options.get(i));
         }
     }
+	public String getQuestion() {
+		return question;
+	}
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+	public ArrayList<String> getOptions() {
+		return options;
+	}
+	public void setOptions(ArrayList<String> options) {
+		this.options = options;
+	}
+	public int getCorrectOptionIndex() {
+		return correctOptionIndex;
+	}
+	public void setCorrectOptionIndex(int correctOptionIndex) {
+		this.correctOptionIndex = correctOptionIndex;
+	}
+	@Override
+	public String toString() {
+		return "Question [question=" + question + ", options=" + options + ", correctOptionIndex=" + correctOptionIndex
+				+ "]";
+	}
+    
+    
 }
