@@ -8,12 +8,20 @@ public class Question {
 	private String question;	//used to store question
 	private ArrayList<String> options;	//used to store options
 	private int correctOptionIndex;	//used to store correct option
+	private String quizName;
 	
+	public String getQuizName() {
+		return quizName;
+	}
+	public void setQuizName(String quizName) {
+		this.quizName = quizName;
+	}
 	//parameterized constructor
-	public Question(String que, ArrayList<String> optionList,int corrIndex) {
+	public Question(String que, ArrayList<String> optionList,int corrIndex,String qn) {
 		this.question=que;
 		this.options=optionList;
 		this.correctOptionIndex=corrIndex;
+		this.quizName=qn;
 	}
 	//parameterless constructor
 	public Question() {

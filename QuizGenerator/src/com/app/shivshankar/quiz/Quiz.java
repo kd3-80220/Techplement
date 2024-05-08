@@ -3,9 +3,6 @@ package com.app.shivshankar.quiz;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 //here class is created for main method
@@ -15,7 +12,7 @@ public class Quiz {
 	public static int menu()
 	{
 		Scanner sc=new Scanner(System.in);
-		System.out.println("1.Add Question");
+		System.out.println("1.Add Quiz");
 		System.out.println("2.Take Quiz");
 		System.out.println("3.Check Score");
 		System.out.println("4.See performance of all students");
@@ -37,14 +34,17 @@ public class Quiz {
 		{
 			switch(choice)
 			{
-			case 1: System.out.println("How many questions you want to add?");
+			case 1: System.out.println("Enter quiz name");
+					String quizName=sc.next();
+					System.out.println("How many questions you want to add?");
 					noQuestions=sc.nextInt();
 					for(int i=0;i<noQuestions;i++)
 					{
 					Question q=new Question();
-					q.addQuestion();	//question added in ArrayList
+					q.setQuizName(quizName);
+					q.addQuestion();	//question initalized in question class
 					qd.addQuestion(q);	//Question added in database
-					gkquestions.add(q);
+					gkquestions.add(q);	//question added in ArrayList
 					}
 				break;
 			case 2: System.out.println("Do you want to give quiz? (yes/no)");
@@ -52,11 +52,14 @@ public class Quiz {
 					if(chooseoption.startsWith("y")) {	//if user enter string start with y then this method will work
 					System.out.println("Enter your name");
 					name=sc.next();
-					
+					qd.getQuizNames();
+					String qn=sc.next();
 					ArrayList<Question> testQuestions=new ArrayList<Question>();
-					testQuestions=qd.getTestQuestions();
+					testQuestions=qd.getTestQuestions(qn);
+					//here Collections.shuffle is used to shuffle questions in array list so that
+					//for every candidate separate sequence will be shown
 					Collections.shuffle(testQuestions);
-					System.out.println(testQuestions.size());
+					System.out.println("No of questions in quiz: "+testQuestions.size());
 					for(int i=0;i<testQuestions.size();i++)
 					{
 						testQuestions.get(i).displayQuestion();

@@ -27,7 +27,7 @@ public class QuizDao implements AutoCloseable{
 	}
 	
 	public int addQuestion(Question question) throws SQLException {
-		String sql = "insert into questionbank values (?,?,?,?,?,?)";
+		String sql = "insert into questionbank values (?,?,?,?,?,?,?)";
 		try(PreparedStatement stmt = con.prepareStatement(sql)) {
 			stmt.setString(1, question.getQuestion());
 			stmt.setString(2, question.getOptions().get(0));
@@ -35,19 +35,21 @@ public class QuizDao implements AutoCloseable{
 			stmt.setString(4, question.getOptions().get(2));
 			stmt.setString(5, question.getOptions().get(3));
 			stmt.setInt(6, question.getCorrectOptionIndex());
+			stmt.setString(7, question.getQuizName());
 			int cnt = stmt.executeUpdate();
 			return cnt; 
 		} //stmt.close();
 	}
 	
-	 public ArrayList<Question> getTestQuestions() throws SQLException {
+	 public ArrayList<Question> getTestQuestions(String qn) throws SQLException {
 	        ArrayList<Question> tQuestions = new ArrayList<>();
 	        PreparedStatement stmt=null;
 	        ResultSet rs=null;
 	        try{
 	    
-	            String query = "SELECT * FROM questionbank";
+	            String query = "SELECT * FROM questionbank where quizname=?";
 	            stmt= con.prepareStatement(query);
+	            stmt.setString(1, qn);
 	            rs= stmt.executeQuery();
 
 	            while (rs.next()) {
@@ -60,7 +62,8 @@ public class QuizDao implements AutoCloseable{
 	                Question question = new Question(
 	                        rs.getString("question"),
 	                        options,
-	                        rs.getInt("correctoption")
+	                        rs.getInt("correctoption"),
+	                        rs.getString("quizname")
 	                );
 	                tQuestions.add(question);
 	            }
@@ -97,6 +100,29 @@ public class QuizDao implements AutoCloseable{
 			 while(rs.next())
 			 {
 				 System.out.println(" Name: "+rs.getString(1)+" Score: "+rs.getInt(2));
+			 }
+		 }finally {
+			 	if (rs != null) {
+	                rs.close();
+	            }
+	            if (stmt != null) {
+	                stmt.close();
+	            } 
+		 }
+	 }
+	 
+	 public void getQuizNames() throws SQLException
+	 {
+		 PreparedStatement stmt=null;
+	     ResultSet rs=null;
+		 try{
+			 String query="select distinct quizname from questionbank";
+			 stmt=con.prepareStatement(query);
+			 rs=stmt.executeQuery();
+			 System.out.println("Select/Enter quiz you want to give...");
+			 while(rs.next())
+			 {
+				 System.out.println(rs.getString(1));
 			 }
 		 }finally {
 			 	if (rs != null) {
